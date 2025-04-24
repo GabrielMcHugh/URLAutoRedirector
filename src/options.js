@@ -25,7 +25,7 @@ $(document).ready(function () {
   });
   // new rule button
   $('#new-rule').click(function () {
-    $('#rule-list').append(newRuleItem('', '', false, true, true, false));
+    $('#rule-list').append(newRuleItem('', '', false, true, false, true));
   });
   // reset rule button
   $('#reset-rule').click(function () {
@@ -62,8 +62,8 @@ $(document).ready(function () {
           var src = rulesJSON[i].src;
           var dst = rulesJSON[i].dst;
           var isRegex = rulesJSON[i].isRegex;
-// var isDeleted = false;
-          var  isReplaceAll = rulesJSON[i].isReplaceAll; // Add isReplaceAll property
+          // var isDeleted = false;
+          var isReplaceAll = rulesJSON[i].isReplaceAll; // Add isReplaceAll property
           var isEnabled = rulesJSON[i].isEnabled;
 
           rules.push({
@@ -84,7 +84,7 @@ $(document).ready(function () {
   // export rule button
   $('#export-rule').click(function () {
     var rulesString = JSON.stringify(rules, null, 2);
-    var blob = new Blob([rulesString], {type: 'application/json'});
+    var blob = new Blob([rulesString], { type: 'application/json' });
     var newLink = document.createElement('a');
     newLink.download = 'redirecting-rules.json';
     newLink.href = window.URL.createObjectURL(blob);
@@ -119,6 +119,8 @@ $(document).on('click', '.is-regex', function () {
     $(this).data('is-regex', true);
     $(this).attr('class', 'icon icon-check-square-o is-regex');
   }
+
+  console.log('Updated isRegExp:', $(this).data('is-regex'));
   gatherRulesOnForm();
   setOptions();
 });
@@ -143,6 +145,7 @@ $(document).on('click', '.is-replace-all', function () {
     $(this).data('is-replace-all', true);
     $(this).attr('class', 'icon icon-check-square-o is-replace-all');
   }
+  console.log('Updated isReplaceAll:', $(this).data('is-replace-all'));
   gatherRulesOnForm();
   setOptions();
 });
@@ -183,6 +186,7 @@ function gatherRulesOnForm() {
     var dst = $('.dst:eq(' + i + ')').val();
     var isRegex = $('.is-regex:eq(' + i + ')').data('is-regex');
     var isReplaceAll = $('.is-replace-all:eq(' + i + ')').data('is-replace-all'); // Add isReplaceAll property
+    console.log("is Replace All Data", isReplaceAll)
     var isDeleted = $('.is-deleted:eq(' + i + ')').data('is-deleted');
     var isEnabled = $('.is-enabled:eq(' + i + ')').data('is-enabled');
     if (!isDeleted) {
@@ -198,6 +202,7 @@ function gatherRulesOnForm() {
 }
 
 function setOptions() {
+  console.log("rules", rules)
   var newOptions = {
     options: {
       isNewTab: isNewTab,
@@ -273,13 +278,12 @@ function newRuleItem(src, dst, isRegex, isEnabled, isReplaceAll) {
     '" class="icon ' +
     (isRegex ? 'icon-check-square-o' : 'icon-square-o') +
     ' is-regex"></div>' +
-    '<div data-is-replace-all="' +
-    isReplaceAll +
-    '" class="icon ' +
+
+    '<div data-is-replace-all="' + isReplaceAll + '" class="icon ' +
     (isReplaceAll ? 'icon-check-square-o' : 'icon-square-o') +
-    ' is-replace-all" title="' +
-    titleReplaceAll +
-    '"></div>' + // Add Replace All toggle
+    ' is-replace-all"></div>' + // Ensure this is correct
+
+
     '<div title="' +
     titleEnable +
     '" data-is-enabled="' +
@@ -343,7 +347,7 @@ function setInterface() {
   $('.src-title').text(ruleSrc);
   $('.dst-title').text(ruleDst);
   $('.is-regex-title').text(ruleRegex);
-  $('.is-replace-all-title').text(ruleReplaceAll); // Add Replace All label
+  // $('.is-replace-all-title').text(ruleReplaceAll); 
   $('.enable-title').text(ruleEnable);
   $('.is-delete-title').text(ruleDelete);
   $('.hint-misconf').text(ruleMisconf);

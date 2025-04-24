@@ -129,6 +129,10 @@ ul {
   width: 64px;
 }
 
+.is-replace-all-title {
+  width: 60px;
+}
+
 .enable-title {
   width: 56px;
 }
@@ -179,6 +183,13 @@ ul {
   width: 60px;
   height: 24px;
   text-align: center;
+}
+
+.is-replace-all {
+  width: 66px;
+  height: 24px;
+  text-align: center;
+  cursor: pointer;
 }
 
 #upload-rule {
