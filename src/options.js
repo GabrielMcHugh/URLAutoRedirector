@@ -25,7 +25,7 @@ $(document).ready(function () {
   });
   // new rule button
   $('#new-rule').click(function () {
-    $('#rule-list').append(newRuleItem('', '', false, true, true));
+    $('#rule-list').append(newRuleItem('', '', false, true, true, false));
   });
   // reset rule button
   $('#reset-rule').click(function () {
@@ -62,7 +62,8 @@ $(document).ready(function () {
           var src = rulesJSON[i].src;
           var dst = rulesJSON[i].dst;
           var isRegex = rulesJSON[i].isRegex;
-          // var isDeleted = false;
+// var isDeleted = false;
+          var  isReplaceAll = rulesJSON[i].isReplaceAll; // Add isReplaceAll property
           var isEnabled = rulesJSON[i].isEnabled;
 
           rules.push({
@@ -70,6 +71,7 @@ $(document).ready(function () {
             dst: dst,
             isEnabled: isEnabled,
             isRegex: isRegex,
+            isReplaceAll: isReplaceAll, // Add isReplaceAll property
           });
         }
         setOptions();
@@ -133,6 +135,18 @@ $(document).on('click', '.is-enabled', function () {
   setOptions();
 });
 
+$(document).on('click', '.is-replace-all', function () {
+  if ($(this).data('is-replace-all') == true) {
+    $(this).data('is-replace-all', false);
+    $(this).attr('class', 'icon icon-square-o is-replace-all');
+  } else if ($(this).data('is-replace-all') == false) {
+    $(this).data('is-replace-all', true);
+    $(this).attr('class', 'icon icon-check-square-o is-replace-all');
+  }
+  gatherRulesOnForm();
+  setOptions();
+});
+
 $(document).on('click', '.is-deleted', function () {
   var confirmDelete = chrome.i18n.getMessage('confirm_delete');
   var r = confirm(confirmDelete);
@@ -168,10 +182,17 @@ function gatherRulesOnForm() {
     var src = $('.src:eq(' + i + ')').val();
     var dst = $('.dst:eq(' + i + ')').val();
     var isRegex = $('.is-regex:eq(' + i + ')').data('is-regex');
+    var isReplaceAll = $('.is-replace-all:eq(' + i + ')').data('is-replace-all'); // Add isReplaceAll property
     var isDeleted = $('.is-deleted:eq(' + i + ')').data('is-deleted');
     var isEnabled = $('.is-enabled:eq(' + i + ')').data('is-enabled');
     if (!isDeleted) {
-      rules.push({src: src, dst: dst, isEnabled: isEnabled, isRegex: isRegex});
+      rules.push({
+        src: src,
+        dst: dst,
+        isEnabled: isEnabled,
+        isRegex: isRegex,
+        isReplaceAll: isReplaceAll, // Add isReplaceAll property
+      });
     }
   }
 }
@@ -228,14 +249,16 @@ function showOptions() {
         rules[i].dst,
         rules[i].isRegex,
         rules[i].isEnabled,
+        rules[i].isReplaceAll, // Add isReplaceAll property
       ),
     );
   }
 }
 
-function newRuleItem(src, dst, isRegex, isEnabled) {
+function newRuleItem(src, dst, isRegex, isEnabled, isReplaceAll) {
   var titleEnable = chrome.i18n.getMessage('title_enable');
   var titleDelete = chrome.i18n.getMessage('title_delete');
+  var titleReplaceAll = chrome.i18n.getMessage('title_replace_all'); // Add title for Replace All
   var ruleItemHTML =
     '<li class="rule-item">' +
     '<div title="Drag item to reorder" class="icon icon-bars drag-item"></div>' +
@@ -250,6 +273,13 @@ function newRuleItem(src, dst, isRegex, isEnabled) {
     '" class="icon ' +
     (isRegex ? 'icon-check-square-o' : 'icon-square-o') +
     ' is-regex"></div>' +
+    '<div data-is-replace-all="' +
+    isReplaceAll +
+    '" class="icon ' +
+    (isReplaceAll ? 'icon-check-square-o' : 'icon-square-o') +
+    ' is-replace-all" title="' +
+    titleReplaceAll +
+    '"></div>' + // Add Replace All toggle
     '<div title="' +
     titleEnable +
     '" data-is-enabled="' +
@@ -281,6 +311,7 @@ function setInterface() {
   var ruleRegex = chrome.i18n.getMessage('rule_regexp');
   var ruleEnable = chrome.i18n.getMessage('rule_enable');
   var ruleDelete = chrome.i18n.getMessage('rule_delete');
+  var ruleReplaceAll = chrome.i18n.getMessage('rule_replace_all'); // Add Replace All label
   var ruleMisconf = chrome.i18n.getMessage('rule_misconf');
   // buttons
   var btnNew = chrome.i18n.getMessage('btn_new');
@@ -312,6 +343,7 @@ function setInterface() {
   $('.src-title').text(ruleSrc);
   $('.dst-title').text(ruleDst);
   $('.is-regex-title').text(ruleRegex);
+  $('.is-replace-all-title').text(ruleReplaceAll); // Add Replace All label
   $('.enable-title').text(ruleEnable);
   $('.is-delete-title').text(ruleDelete);
   $('.hint-misconf').text(ruleMisconf);

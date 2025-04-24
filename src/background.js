@@ -224,6 +224,7 @@ function matchUrl(url) {
   for (var i = 0; i < rules.length; i++) {
     var isEnabled = rules[i].isEnabled;
     var isRegex = rules[i].isRegex;
+    var isReplaceAll= rules[i].isReplaceAll;
     var src = rules[i].src;
     var dst = rules[i].dst;
 
@@ -231,6 +232,9 @@ function matchUrl(url) {
       if (isRegex) {
         var re = new RegExp(src);
         if (url.search(re) != -1) {
+          if (isReplaceAll) {
+            return dst;
+          }
           var newUrl = url.replace(re, dst);
           if (url != newUrl) {
             return newUrl;
